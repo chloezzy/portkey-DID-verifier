@@ -69,7 +69,7 @@ public class CAVerifierServerHttpApiHostModule : AbpModule
         ConfigureSwaggerServices(context, configuration);
         ConfigureOrleans(context, configuration);
         Configure<RealIpOptions>(configuration.GetSection("RealIp"));
-
+        
         // Configure<AbpExceptionHandlingOptions>(options =>
         // {
         //    options.SendExceptionsDetailsToClients = true;
@@ -79,6 +79,8 @@ public class CAVerifierServerHttpApiHostModule : AbpModule
         {
             options.IsEnabled = false;//Disables the auditing system
         });
+        ConfigureTokenCleanupService();
+
     }
 
     private void ConfigureCache(IConfiguration configuration)
