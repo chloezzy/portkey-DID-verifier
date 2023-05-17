@@ -1,5 +1,4 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using CAVerifierServer.Email;
+﻿using CAVerifierServer.Email;
 using CAVerifierServer.Grains;
 using CAVerifierServer.Options;
 using CAVerifierServer.Phone;
