@@ -10,8 +10,8 @@ public class CAVerifierServerMongoDbFixture : IDisposable
 
     static CAVerifierServerMongoDbFixture()
     {
-        MongoDbRunner = MongoDbRunner.Start(singleNodeReplSet: true, singleNodeReplSetWaitTimeout: 10);
-        ConnectionString = MongoDbRunner.ConnectionString;
+        /*MongoDbRunner = MongoDbRunner.Start(singleNodeReplSet: true, singleNodeReplSetWaitTimeout: 10);
+        ConnectionString = MongoDbRunner.ConnectionString;*/
     }
 
     public void Dispose()
