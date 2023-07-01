@@ -44,8 +44,7 @@ public class TelesignSmsMessageSender : ISMSServiceSender
         }
 
         var phoneNumber = smsMessage.PhoneNumber;
-        //var message = string.Format(_smsTemplateOptions.Template,_verifierInfoOptions.Name, smsMessage.Text);
-        var message = string.Format(_smsTemplateOptions.Template,"CryptoGuardian", smsMessage.Text);
+        var message = string.Format(_smsTemplateOptions.Template,_verifierInfoOptions.Name, smsMessage.Text);
         try
         {
             _logger.LogDebug("Telesign SMS Service sending SMSMessage to {phoneNum}",
