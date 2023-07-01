@@ -24,7 +24,8 @@ public class TelesignSmsMessageSender : ISMSServiceSender
 
     public TelesignSmsMessageSender(ILogger<TelesignSmsMessageSender> logger,
         IOptions<VerifierInfoOptions> verifierInfoOptions,
-        IOptions<TelesignSMSMessageOptions> telesignSmsMessageOptions, IOptionsSnapshot<SMSTemplateOptions> smsTemplateOptions)
+        IOptions<TelesignSMSMessageOptions> telesignSmsMessageOptions,
+        IOptionsSnapshot<SMSTemplateOptions> smsTemplateOptions)
     {
         _logger = logger;
         _smsTemplateOptions = smsTemplateOptions.Value;
@@ -44,7 +45,7 @@ public class TelesignSmsMessageSender : ISMSServiceSender
         }
 
         var phoneNumber = smsMessage.PhoneNumber;
-        var message = string.Format(_smsTemplateOptions.Template,_verifierInfoOptions.Name, smsMessage.Text);
+        var message = string.Format(_smsTemplateOptions.Template, _verifierInfoOptions.Name, smsMessage.Text);
         try
         {
             _logger.LogDebug("Telesign SMS Service sending SMSMessage to {phoneNum}",
