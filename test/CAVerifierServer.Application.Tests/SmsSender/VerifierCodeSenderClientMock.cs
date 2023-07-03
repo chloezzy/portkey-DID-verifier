@@ -55,6 +55,19 @@ public partial class SmsSenderTest
                 SmsServiceInfos = smsServiceDic
             });
     }
+    
+    private IOptionsSnapshot<SMSTemplateOptions> GetSmsTemplateOptions()
+    {
+        var mockOptionsSnapshot = new Mock<IOptionsSnapshot<SMSTemplateOptions>>();
+        mockOptionsSnapshot.Setup(o => o.Value).Returns(
+            new SMSTemplateOptions
+            {
+                Template = "[{0}] Portkey Code: {1}. Expires in 10 minutes. Please ignore this if you didn’t request a code.",
+
+            });
+        return mockOptionsSnapshot.Object;
+    }
+    
 
     private IOptions<AwsEmailOptions> GetAwsEmailOptions()
     {
