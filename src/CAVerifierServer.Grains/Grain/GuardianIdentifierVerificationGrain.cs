@@ -126,6 +126,7 @@ public class GuardianIdentifierVerificationGrain : Grain<GuardianIdentifierVerif
             dto.Message = Error.Message[Error.InvalidLoginGuardianIdentifier];
             return dto;
         }
+
         verifications = verifications.Where(p => p.VerifierSessionId == input.VerifierSessionId).ToList();
         if (verifications.Count == 0)
         {
