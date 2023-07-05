@@ -23,12 +23,14 @@ public class AwsSmsMessageSender : ISMSServiceSender
     private const string SuccessMark = "2";
     private const string PhoneNumReplacement = "$1****$2";
     private readonly Regex _regex;
+    private readonly SMSTemplateOptions _smsTemplateOptions;
 
 
     public AwsSmsMessageSender(ILogger<AwsSmsMessageSender> logger, IOptions<VerifierInfoOptions> verifierInfoOptions,
-        IOptions<AwssmsMessageOptions> smsMessageOptions)
+        IOptions<AwssmsMessageOptions> smsMessageOptions, IOptionsSnapshot<SMSTemplateOptions> smsTemplateOptions)
     {
         _logger = logger;
+        _smsTemplateOptions = smsTemplateOptions.Value;
         _regex = new Regex("(.{6}).*(.{4})");
         _awssmsMessageOptions = smsMessageOptions.Value;
         _verifierInfoOptions = verifierInfoOptions.Value;
@@ -48,7 +50,7 @@ public class AwsSmsMessageSender : ISMSServiceSender
         // Now actually send the message.
         var request = new PublishRequest
         {
-            Message = SMSMessageBodyBuilder.BuildBodyTemplate(_verifierInfoOptions.Name, smsMessage.Text),
+            Message = string.Format(_smsTemplateOptions.Template, _verifierInfoOptions.Name, smsMessage.Text),
             PhoneNumber = smsMessage.PhoneNumber
         };
         try
