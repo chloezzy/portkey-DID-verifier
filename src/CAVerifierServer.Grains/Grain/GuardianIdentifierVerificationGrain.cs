@@ -200,7 +200,9 @@ public class GuardianIdentifierVerificationGrain : Grain<GuardianIdentifierVerif
         var verifierSPublicKey =
             CryptoHelper.FromPrivateKey(ByteArrayHelper.HexStringToByteArray(privateKey)).PublicKey;
         var verifierAddress = Address.FromPublicKey(verifierSPublicKey);
-        var data = inputOperationType == "0" ? $"{guardianTypeCode},{guardianIdentifierHash},{_clock.Now},{verifierAddress.ToBase58()},{salt}" : $"{guardianTypeCode},{guardianIdentifierHash},{_clock.Now:yyyy/MM/dd HH:mm:ss.fff},{verifierAddress.ToBase58()},{salt},{inputOperationType}";
+        var data = inputOperationType == "0" || string.IsNullOrWhiteSpace(inputOperationType)
+            ? $"{guardianTypeCode},{guardianIdentifierHash},{_clock.Now},{verifierAddress.ToBase58()},{salt}"
+            : $"{guardianTypeCode},{guardianIdentifierHash},{_clock.Now:yyyy/MM/dd HH:mm:ss.fff},{verifierAddress.ToBase58()},{salt},{inputOperationType}";
         var hashByteArray = HashHelper.ComputeFrom(data).ToByteArray();
         var signature =
             CryptoHelper.SignWithPrivateKey(ByteArrayHelper.HexStringToByteArray(privateKey), hashByteArray);
