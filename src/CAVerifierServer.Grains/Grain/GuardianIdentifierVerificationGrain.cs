@@ -126,7 +126,6 @@ public class GuardianIdentifierVerificationGrain : Grain<GuardianIdentifierVerif
             dto.Message = Error.Message[Error.InvalidLoginGuardianIdentifier];
             return dto;
         }
-
         verifications = verifications.Where(p => p.VerifierSessionId == input.VerifierSessionId).ToList();
         if (verifications.Count == 0)
         {
@@ -200,7 +199,9 @@ public class GuardianIdentifierVerificationGrain : Grain<GuardianIdentifierVerif
         var verifierSPublicKey =
             CryptoHelper.FromPrivateKey(ByteArrayHelper.HexStringToByteArray(privateKey)).PublicKey;
         var verifierAddress = Address.FromPublicKey(verifierSPublicKey);
-        var data = inputOperationType == "0" ? $"{guardianTypeCode},{guardianIdentifierHash},{_clock.Now},{verifierAddress.ToBase58()},{salt}" : $"{guardianTypeCode},{guardianIdentifierHash},{_clock.Now:yyyy/MM/dd HH:mm:ss.fff},{verifierAddress.ToBase58()},{salt},{inputOperationType}";
+        var data = inputOperationType == "0" || string.IsNullOrWhiteSpace(inputOperationType)
+            ? $"{guardianTypeCode},{guardianIdentifierHash},{_clock.Now},{verifierAddress.ToBase58()},{salt}"
+            : $"{guardianTypeCode},{guardianIdentifierHash},{_clock.Now:yyyy/MM/dd HH:mm:ss.fff},{verifierAddress.ToBase58()},{salt},{inputOperationType}";
         var hashByteArray = HashHelper.ComputeFrom(data).ToByteArray();
         var signature =
             CryptoHelper.SignWithPrivateKey(ByteArrayHelper.HexStringToByteArray(privateKey), hashByteArray);
