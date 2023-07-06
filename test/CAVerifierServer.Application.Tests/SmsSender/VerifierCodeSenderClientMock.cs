@@ -46,7 +46,7 @@ public partial class SmsSenderTest
         var smsServiceDic = new Dictionary<string, SmsServiceOption>();
         smsServiceDic.Add("MockSmsServiceSender", new SmsServiceOption
         {
-            IsEnable = true,
+            SupportingCountries = new List<string> { "CN" },
             Ratio = 1
         });
         return new OptionsWrapper<SmsServiceOptions>(

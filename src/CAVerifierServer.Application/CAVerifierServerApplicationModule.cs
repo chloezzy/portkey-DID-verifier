@@ -42,6 +42,7 @@ public class CAVerifierServerApplicationModule : AbpModule
         Configure<SmsServiceOptions>(configuration.GetSection("SmsService"));
         Configure<TelesignSMSMessageOptions>(configuration.GetSection("TelesignSMSMessage"));
         Configure<SMSTemplateOptions>(configuration.GetSection("SMSTemplate"));
+        Configure<MobileCountryRegularCategoryOptions>(configuration.GetSection("MobileCountryRegularCategory"));
         
         context.Services.AddSingleton<IEmailSender, AwsEmailSender>();
         context.Services.AddSingleton<ISMSServiceSender,AwsSmsMessageSender>();

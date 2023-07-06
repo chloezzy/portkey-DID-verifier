@@ -64,13 +64,19 @@ public class CAVerifierServerApplicationTestModule : AbpModule
 
         var smsServiceOption = new SmsServiceOption
         {
-            IsEnable = true,
+            SupportingCountries = new List<string>
+            {
+                "CN"
+            },
             Ratio = 1
         };
         
         var smsServiceOption1 = new SmsServiceOption
         {
-            IsEnable = true,
+            SupportingCountries = new List<string>
+            {
+                "US"
+            },
             Ratio = 2
         };
         var smsServiceInfoDic = new Dictionary<string, SmsServiceOption>();
