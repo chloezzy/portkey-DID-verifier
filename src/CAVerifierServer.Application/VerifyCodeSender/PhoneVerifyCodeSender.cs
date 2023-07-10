@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CAVerifierServer.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using NUglify.JavaScript.Syntax;
 using Volo.Abp.Sms;
 
 namespace CAVerifierServer.VerifyCodeSender;
@@ -16,31 +18,41 @@ public class PhoneVerifyCodeSender : IVerifyCodeSender
     private readonly IEnumerable<ISMSServiceSender> _smsServiceSender;
     private readonly SmsServiceOptions _smsServiceOptions;
     private const string ChineseRegionNum = "+86";
+    private readonly MobileCountryRegularCategoryOptions _mobileCountryRegularCategoryOptions;
 
     public PhoneVerifyCodeSender(ILogger<PhoneVerifyCodeSender> logger,
         IEnumerable<ISMSServiceSender> smsServiceSender,
-        IOptions<SmsServiceOptions> smsServiceOptions)
+        IOptions<SmsServiceOptions> smsServiceOptions,
+        IOptions<MobileCountryRegularCategoryOptions> mobileCountryRegularCategoryOptions)
     {
         _logger = logger;
         _smsServiceSender = smsServiceSender;
+        _mobileCountryRegularCategoryOptions = mobileCountryRegularCategoryOptions.Value;
         _smsServiceOptions = smsServiceOptions.Value;
     }
 
     public async Task SendCodeByGuardianIdentifierAsync(string guardianIdentifier, string code)
     {
-        Dictionary<string, int> smsServiceDic;
-        if (guardianIdentifier.StartsWith(ChineseRegionNum))
+        var countryName = "";
+        foreach (var category in _mobileCountryRegularCategoryOptions.MobileInfos)
         {
-            smsServiceDic = _smsServiceOptions.SmsServiceInfos.Where(o => o.Value.IsEnable)
-                .OrderByDescending(k => k.Value.Ratio)
-                .ToDictionary(o => o.Key, o => o.Value.Ratio);
+            var regex = new Regex(category.MobileRegular);
+            if (!regex.IsMatch(guardianIdentifier))
+            {
+                continue;
+            }
+
+            countryName = category.Country;
+            break;
+
+
         }
-        else
-        {
-            smsServiceDic = _smsServiceOptions.SmsServiceInfos
-                .OrderByDescending(k => k.Value.Ratio)
-                .ToDictionary(o => o.Key, o => o.Value.Ratio);
-        }
+
+
+        var smsServiceDic = _smsServiceOptions.SmsServiceInfos
+            .Where(o => o.Value.SupportingCountries.Contains(countryName))
+            .OrderByDescending(k => k.Value.Ratio)
+            .ToDictionary(o => o.Key, o => o.Value.Ratio);
 
         if (smsServiceDic.Count == 0)
         {
@@ -49,9 +61,9 @@ public class PhoneVerifyCodeSender : IVerifyCodeSender
         }
 
         var failedServicesCount = 0;
-        foreach (var smsServiceSenderName in smsServiceDic.Keys)
+        foreach (var smsServiceSender in smsServiceDic.Keys.Select(smsServiceSenderName =>
+                     _smsServiceSender.FirstOrDefault(o => o.ServiceName == smsServiceSenderName)))
         {
-            var smsServiceSender = _smsServiceSender.FirstOrDefault(o => o.ServiceName == smsServiceSenderName);
             if (smsServiceSender == null)
             {
                 _logger.LogError("Can not find sms service provider {serviceName}", smsServiceDic.FirstOrDefault().Key);

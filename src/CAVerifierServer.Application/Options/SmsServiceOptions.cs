@@ -9,7 +9,7 @@ public class SmsServiceOptions
 
 public class SmsServiceOption
 {
-    public bool IsEnable { get; set; }
+    public List<string> SupportingCountries { get; set; }
 
     public int Ratio { get; set; }
 }

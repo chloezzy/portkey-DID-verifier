@@ -20,12 +20,15 @@ public class TelesignSmsMessageSender : ISMSServiceSender
     private readonly MessagingClient _messagingClient;
     private const string PhoneNumReplacement = "$1****$2";
     private readonly Regex _regex;
+    private readonly SMSTemplateOptions _smsTemplateOptions;
 
     public TelesignSmsMessageSender(ILogger<TelesignSmsMessageSender> logger,
         IOptions<VerifierInfoOptions> verifierInfoOptions,
-        IOptions<TelesignSMSMessageOptions> telesignSmsMessageOptions)
+        IOptions<TelesignSMSMessageOptions> telesignSmsMessageOptions,
+        IOptionsSnapshot<SMSTemplateOptions> smsTemplateOptions)
     {
         _logger = logger;
+        _smsTemplateOptions = smsTemplateOptions.Value;
         _regex = new Regex("(.{6}).*(.{4})");
         _telesignSMSMessageOptions = telesignSmsMessageOptions.Value;
         _verifierInfoOptions = verifierInfoOptions.Value;
@@ -42,7 +45,7 @@ public class TelesignSmsMessageSender : ISMSServiceSender
         }
 
         var phoneNumber = smsMessage.PhoneNumber;
-        var message = SMSMessageBodyBuilder.BuildBodyTemplate(_verifierInfoOptions.Name, smsMessage.Text);
+        var message = string.Format(_smsTemplateOptions.Template, _verifierInfoOptions.Name, smsMessage.Text);
         try
         {
             _logger.LogDebug("Telesign SMS Service sending SMSMessage to {phoneNum}",

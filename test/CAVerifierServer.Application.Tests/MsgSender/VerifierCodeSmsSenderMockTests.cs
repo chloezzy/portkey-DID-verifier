@@ -16,17 +16,17 @@ public partial class VerifierCodeSmsSenderTests
         var smsServiceDic = new Dictionary<string, SmsServiceOption>();
         smsServiceDic.Add("AWS", new SmsServiceOption
         {
-            IsEnable = true,
+            SupportingCountries = new List<string>{"CN"},
             Ratio = 1
         });
         smsServiceDic.Add("Telesign", new SmsServiceOption
         {
-            IsEnable = true,
+            SupportingCountries = new List<string>{"CN"},
             Ratio = 2
         });
         smsServiceDic.Add("MockSmsServiceSender", new SmsServiceOption
         {
-            IsEnable = true,
+            SupportingCountries = new List<string>{"CN"},
             Ratio = 0
         });
         return new OptionsWrapper<SmsServiceOptions>(
