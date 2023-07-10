@@ -37,12 +37,15 @@ public class PhoneVerifyCodeSender : IVerifyCodeSender
         foreach (var category in _mobileCountryRegularCategoryOptions.MobileInfos)
         {
             var regex = new Regex(category.MobileRegular);
-            if (regex.IsMatch(guardianIdentifier))
+            if (!regex.IsMatch(guardianIdentifier))
             {
-                countryName = category.Country;
+                continue;
             }
 
+            countryName = category.Country;
             break;
+
+
         }
 
 
