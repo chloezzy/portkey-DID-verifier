@@ -2,7 +2,7 @@
   "MobileCountryRegularCategory": {
     "MobileInfos": [
       {
-        "MobileRegular": "^(\\+?0?86\\-?)?1[345789]\\d{9}$",
+        "MobileRegular": "^(\\+?0?86\\-?)?1[3456789]\\d{9}$",
         "CountryCode": "+86",
         "Country": "CN"
       },
