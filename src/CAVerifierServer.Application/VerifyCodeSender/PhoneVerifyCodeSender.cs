@@ -17,13 +17,12 @@ public class PhoneVerifyCodeSender : IVerifyCodeSender
     private readonly ILogger<PhoneVerifyCodeSender> _logger;
     private readonly IEnumerable<ISMSServiceSender> _smsServiceSender;
     private readonly SmsServiceOptions _smsServiceOptions;
-    private const string ChineseRegionNum = "+86";
     private readonly MobileCountryRegularCategoryOptions _mobileCountryRegularCategoryOptions;
 
     public PhoneVerifyCodeSender(ILogger<PhoneVerifyCodeSender> logger,
         IEnumerable<ISMSServiceSender> smsServiceSender,
-        IOptions<SmsServiceOptions> smsServiceOptions,
-        IOptions<MobileCountryRegularCategoryOptions> mobileCountryRegularCategoryOptions)
+        IOptionsSnapshot<SmsServiceOptions> smsServiceOptions,
+        IOptionsSnapshot<MobileCountryRegularCategoryOptions> mobileCountryRegularCategoryOptions)
     {
         _logger = logger;
         _smsServiceSender = smsServiceSender;
@@ -44,10 +43,7 @@ public class PhoneVerifyCodeSender : IVerifyCodeSender
 
             countryName = category.Country;
             break;
-
-
         }
-
 
         var smsServiceDic = _smsServiceOptions.SmsServiceInfos
             .Where(o => o.Value.SupportingCountries.Contains(countryName))
