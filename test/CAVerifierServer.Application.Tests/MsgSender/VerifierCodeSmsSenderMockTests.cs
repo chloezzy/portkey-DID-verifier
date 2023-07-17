@@ -18,28 +18,28 @@ public partial class VerifierCodeSmsSenderTests
         {
             SupportingCountries = new Dictionary<string, int>
             {
-                {"CN", 1}
+                { "CN", 1 }
             },
         });
         smsServiceDic.Add("Telesign", new SmsServiceOption
         {
             SupportingCountries = new Dictionary<string, int>
             {
-                {"CN", 2}
+                { "CN", 2 }
             },
         });
         smsServiceDic.Add("Twilio", new SmsServiceOption
         {
             SupportingCountries = new Dictionary<string, int>
             {
-                {"CN", 3}
+                { "CN", 3 }
             },
         });
         smsServiceDic.Add("MockSmsServiceSender", new SmsServiceOption
         {
             SupportingCountries = new Dictionary<string, int>
             {
-                {"CN", 4}
+                { "CN", 4 }
             },
         });
         return new OptionsWrapper<SmsServiceOptions>(

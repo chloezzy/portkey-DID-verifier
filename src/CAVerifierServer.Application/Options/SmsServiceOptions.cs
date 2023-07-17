@@ -9,6 +9,5 @@ public class SmsServiceOptions
 
 public class SmsServiceOption
 {
-    public Dictionary<string,int> SupportingCountries { get; set; }
-
+    public Dictionary<string, int> SupportingCountries { get; set; }
 }

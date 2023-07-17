@@ -53,16 +53,15 @@ public partial class VerifierCodeSenderTest
         {
             SupportingCountries = new Dictionary<string, int>
             {
-                {"CN", 1}
+                { "CN", 1 }
             },
         });
         smsServiceDic.Add("MockSmsServiceSender2", new SmsServiceOption
         {
             SupportingCountries = new Dictionary<string, int>
             {
-                {"CN", 1}
+                { "CN", 1 }
             },
-           
         });
         return new OptionsWrapper<SmsServiceOptions>(
             new SmsServiceOptions
