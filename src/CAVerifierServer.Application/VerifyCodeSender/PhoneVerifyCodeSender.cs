@@ -45,10 +45,16 @@ public class PhoneVerifyCodeSender : IVerifyCodeSender
             break;
         }
 
-        var smsServiceDic = _smsServiceOptions.SmsServiceInfos
-            .Where(o => o.Value.SupportingCountries.Contains(countryName))
-            .OrderByDescending(k => k.Value.Ratio)
-            .ToDictionary(o => o.Key, o => o.Value.Ratio);
+        var smsServiceInfos = _smsServiceOptions.SmsServiceInfos;
+        var supportCountriesDic = new Dictionary<string, int>();
+        var smsServiceDic = new Dictionary<string, int>();
+        foreach (var key in smsServiceInfos.Keys.Where(key =>
+                     smsServiceInfos[key].SupportingCountries.ContainsKey(countryName)))
+        {
+            supportCountriesDic.Add(key, smsServiceInfos[key].SupportingCountries[countryName]);
+            smsServiceDic = supportCountriesDic.OrderByDescending(k => k.Value).ToDictionary(o => o.Key, o => o.Value);
+        }
+
 
         if (smsServiceDic.Count == 0)
         {

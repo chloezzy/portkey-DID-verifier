@@ -64,20 +64,18 @@ public class CAVerifierServerApplicationTestModule : AbpModule
 
         var smsServiceOption = new SmsServiceOption
         {
-            SupportingCountries = new List<string>
+            SupportingCountries = new Dictionary<string, int>
             {
-                "CN"
+                {"CN", 1}
             },
-            Ratio = 1
         };
         
         var smsServiceOption1 = new SmsServiceOption
         {
-            SupportingCountries = new List<string>
+            SupportingCountries = new Dictionary<string, int>
             {
-                "US"
+                {"CN", 1}
             },
-            Ratio = 2
         };
         var smsServiceInfoDic = new Dictionary<string, SmsServiceOption>();
         smsServiceInfoDic.Add("AWS",smsServiceOption);
