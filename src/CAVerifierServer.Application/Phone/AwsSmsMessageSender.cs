@@ -21,8 +21,7 @@ public class AwsSmsMessageSender : ISMSServiceSender
     private readonly AwssmsMessageOptions _awssmsMessageOptions;
     private readonly AmazonSimpleNotificationServiceClient _amazonSimpleNotificationServiceClient;
     private const string SuccessMark = "2";
-    private const string PhoneNumReplacement = "$1****$2";
-    private readonly Regex _regex;
+    private readonly Regex _regex = new Regex("(.{6}).*(.{4})");
     private readonly SMSTemplateOptions _smsTemplateOptions;
 
 
@@ -31,7 +30,6 @@ public class AwsSmsMessageSender : ISMSServiceSender
     {
         _logger = logger;
         _smsTemplateOptions = smsTemplateOptions.Value;
-        _regex = new Regex("(.{6}).*(.{4})");
         _awssmsMessageOptions = smsMessageOptions.Value;
         _verifierInfoOptions = verifierInfoOptions.Value;
         _amazonSimpleNotificationServiceClient = new AmazonSimpleNotificationServiceClient(
@@ -41,12 +39,6 @@ public class AwsSmsMessageSender : ISMSServiceSender
 
     private async Task SendTextMessageAsync(SmsMessage smsMessage)
     {
-        if (string.IsNullOrEmpty(smsMessage.PhoneNumber) || string.IsNullOrEmpty(smsMessage.Text))
-        {
-            _logger.LogError("PhoneNum or message text is invalidate");
-            return;
-        }
-
         // Now actually send the message.
         var request = new PublishRequest
         {
@@ -56,14 +48,14 @@ public class AwsSmsMessageSender : ISMSServiceSender
         try
         {
             _logger.LogDebug("AWS SMS Service sending SMSMessage to {phoneNum}",
-                _regex.Replace(smsMessage.PhoneNumber, PhoneNumReplacement));
+                _regex.Replace(smsMessage.PhoneNumber, CAVerifierServerApplicationConsts.PhoneNumReplacement));
             var response = await _amazonSimpleNotificationServiceClient.PublishAsync(request);
             var isSuccess = Convert.ToInt32(response.HttpStatusCode).ToString().StartsWith(SuccessMark);
             if (!isSuccess)
             {
                 _logger.LogError(
                     "AWS SMS Service sending SMSMessage failed to {phoneNum}, ResponseCode is {statusCode}",
-                    _regex.Replace(smsMessage.PhoneNumber, PhoneNumReplacement), response.HttpStatusCode);
+                    _regex.Replace(smsMessage.PhoneNumber, CAVerifierServerApplicationConsts.PhoneNumReplacement), response.HttpStatusCode);
                 throw new SmsSenderFailedException("AWS SMS Service sending SMSMessage failed");
             }
         }

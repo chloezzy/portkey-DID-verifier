@@ -20,9 +20,8 @@ public class TwilioSmsMessageSender : ISMSServiceSender
     private readonly ILogger<AwsSmsMessageSender> _logger;
     private readonly VerifierInfoOptions _verifierInfoOptions;
     private readonly TwilioSmsMessageOptions _twilioSmsMessageOptions;
-    private const string PhoneNumReplacement = "$1****$2";
-    private readonly Regex _regex;
-    private const string CNCode = "+86";
+    private readonly Regex _regex = new Regex("(.{6}).*(.{4})");
+    private readonly Regex _CNRegex = new Regex(CAVerifierServerApplicationConsts.ChinaPhoneRegex);
     private const string CustomerVar = "custom_var";
     private const string VerifyStatus = "pending";
 
@@ -31,7 +30,6 @@ public class TwilioSmsMessageSender : ISMSServiceSender
         IOptions<TwilioSmsMessageOptions> twilioSmsMessageOptions)
     {
         _logger = logger;
-        _regex = new Regex("(.{6}).*(.{4})");
         _twilioSmsMessageOptions = twilioSmsMessageOptions.Value;
         _verifierInfoOptions = verifierInfoOptions.Value;
     }
@@ -39,12 +37,6 @@ public class TwilioSmsMessageSender : ISMSServiceSender
 
     public async Task SendAsync(SmsMessage smsMessage)
     {
-        if (string.IsNullOrEmpty(smsMessage.PhoneNumber) || string.IsNullOrEmpty(smsMessage.Text))
-        {
-            _logger.LogError("PhoneNum or message text is invalidate");
-            return;
-        }
-
         var customSubstitutions = new Dictionary<string, string> { { CustomerVar, _verifierInfoOptions.Name } };
         var customSubstitutionsJsonStr = JsonConvert.SerializeObject(customSubstitutions);
 
@@ -52,7 +44,7 @@ public class TwilioSmsMessageSender : ISMSServiceSender
         {
             TwilioClient.Init(_twilioSmsMessageOptions.AccountSid, _twilioSmsMessageOptions.AuthToken);
             VerificationResource verification;
-            if (smsMessage.PhoneNumber.StartsWith(CNCode))
+            if (_CNRegex.IsMatch(smsMessage.PhoneNumber))
             {
                 verification = await VerificationResource.CreateAsync(
                     to: smsMessage.PhoneNumber,
@@ -80,13 +72,13 @@ public class TwilioSmsMessageSender : ISMSServiceSender
             if (verification.Status != VerifyStatus)
             {
                 _logger.LogError(
-                    "Twilio SMS Service sending SMSMessage failed to {phoneNum}, reason is {errorMessage}",
-                    _regex.Replace(smsMessage.PhoneNumber, PhoneNumReplacement), verification.DateUpdated);
+                    "Twilio SMS Service sending SMSMessage failed to {phoneNum}.",
+                    _regex.Replace(smsMessage.PhoneNumber, CAVerifierServerApplicationConsts.PhoneNumReplacement));
                 throw new SmsSenderFailedException("Twilio SMS Service sending SMSMessage failed");
             }
 
             _logger.LogDebug("Twilio SMS Service sending SMSMessage to {phoneNum}",
-                _regex.Replace(smsMessage.PhoneNumber, PhoneNumReplacement));
+                _regex.Replace(smsMessage.PhoneNumber, CAVerifierServerApplicationConsts.PhoneNumReplacement));
         }
         catch (Exception ex)
         {

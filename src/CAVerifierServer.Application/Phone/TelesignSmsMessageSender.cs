@@ -18,8 +18,7 @@ public class TelesignSmsMessageSender : ISMSServiceSender
     private readonly VerifierInfoOptions _verifierInfoOptions;
     private readonly TelesignSMSMessageOptions _telesignSMSMessageOptions;
     private readonly MessagingClient _messagingClient;
-    private const string PhoneNumReplacement = "$1****$2";
-    private readonly Regex _regex;
+    private readonly Regex _regex = new Regex("(.{6}).*(.{4})");
     private readonly SMSTemplateOptions _smsTemplateOptions;
 
     public TelesignSmsMessageSender(ILogger<TelesignSmsMessageSender> logger,
@@ -29,7 +28,6 @@ public class TelesignSmsMessageSender : ISMSServiceSender
     {
         _logger = logger;
         _smsTemplateOptions = smsTemplateOptions.Value;
-        _regex = new Regex("(.{6}).*(.{4})");
         _telesignSMSMessageOptions = telesignSmsMessageOptions.Value;
         _verifierInfoOptions = verifierInfoOptions.Value;
         _messagingClient =
@@ -38,24 +36,18 @@ public class TelesignSmsMessageSender : ISMSServiceSender
 
     private async Task SendTextMessageAsync(SmsMessage smsMessage)
     {
-        if (string.IsNullOrEmpty(smsMessage.PhoneNumber) || string.IsNullOrEmpty(smsMessage.Text))
-        {
-            _logger.LogError("PhoneNum or message text is invalidate");
-            return;
-        }
-
         var phoneNumber = smsMessage.PhoneNumber;
         var message = string.Format(_smsTemplateOptions.Template, _verifierInfoOptions.Name, smsMessage.Text);
         try
         {
             _logger.LogDebug("Telesign SMS Service sending SMSMessage to {phoneNum}",
-                _regex.Replace(smsMessage.PhoneNumber, PhoneNumReplacement));
+                _regex.Replace(smsMessage.PhoneNumber, CAVerifierServerApplicationConsts.PhoneNumReplacement));
             var response = await _messagingClient.MessageAsync(phoneNumber, message, _telesignSMSMessageOptions.Type);
             if (!response.OK)
             {
                 _logger.LogError(
                     "Telesign SMS Service sending SMSMessage failed to {phoneNum}",
-                    _regex.Replace(smsMessage.PhoneNumber, PhoneNumReplacement));
+                    _regex.Replace(smsMessage.PhoneNumber, CAVerifierServerApplicationConsts.PhoneNumReplacement));
                 throw new SmsSenderFailedException("Telesign SMS Service sending SMSMessage failed");
             }
         }

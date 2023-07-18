@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using CAVerifierServer.Options;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using NUglify.JavaScript.Syntax;
 using Volo.Abp.Sms;
 
 namespace CAVerifierServer.VerifyCodeSender;
@@ -32,6 +31,12 @@ public class PhoneVerifyCodeSender : IVerifyCodeSender
 
     public async Task SendCodeByGuardianIdentifierAsync(string guardianIdentifier, string code)
     {
+        if (string.IsNullOrEmpty(guardianIdentifier) || string.IsNullOrEmpty(code))
+        {
+            _logger.LogError("PhoneNum or message text is invalidate");
+            return;
+        }
+        
         var countryName = "";
         foreach (var category in _mobileCountryRegularCategoryOptions.MobileInfos)
         {
@@ -46,16 +51,8 @@ public class PhoneVerifyCodeSender : IVerifyCodeSender
         }
 
         var smsServiceInfos = _smsServiceOptions.SmsServiceInfos;
-        var supportCountriesDic = new Dictionary<string, int>();
-        var smsServiceDic = new Dictionary<string, int>();
-        foreach (var key in smsServiceInfos.Keys.Where(key =>
-                     smsServiceInfos[key].SupportingCountries.ContainsKey(countryName)))
-        {
-            supportCountriesDic.Add(key, smsServiceInfos[key].SupportingCountries[countryName]);
-            smsServiceDic = supportCountriesDic.OrderByDescending(k => k.Value).ToDictionary(o => o.Key, o => o.Value);
-        }
-
-
+        var supportCountriesDic = smsServiceInfos.Keys.Where(key => smsServiceInfos[key].SupportingCountries.ContainsKey(countryName)).ToDictionary(key => key, key => smsServiceInfos[key].SupportingCountries[countryName]);
+        var smsServiceDic = supportCountriesDic.OrderByDescending(k => k.Value).ToDictionary(o => o.Key, o => o.Value);
         if (smsServiceDic.Count == 0)
         {
             _logger.LogError("No sms service provider is enable");
@@ -99,4 +96,6 @@ public class PhoneVerifyCodeSender : IVerifyCodeSender
     {
         return !string.IsNullOrWhiteSpace(guardianIdentifier);
     }
+    
+    
 }
