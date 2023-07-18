@@ -52,8 +52,8 @@ public class PhoneVerifyCodeSender : IVerifyCodeSender
 
         var smsServiceInfos = _smsServiceOptions.SmsServiceInfos;
         var supportCountriesDic = smsServiceInfos.Keys
-            .Where(key => smsServiceInfos[key].SupportingCountries.ContainsKey(countryName)).ToDictionary(key => key,
-                key => smsServiceInfos[key].SupportingCountries[countryName]);
+            .Where(key => smsServiceInfos[key].SupportingCountriesRadio.ContainsKey(countryName)).ToDictionary(key => key,
+                key => smsServiceInfos[key].SupportingCountriesRadio[countryName]);
         var smsServiceDic = supportCountriesDic.OrderByDescending(k => k.Value).ToDictionary(o => o.Key, o => o.Value);
         if (smsServiceDic.Count == 0)
         {

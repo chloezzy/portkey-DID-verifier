@@ -16,28 +16,28 @@ public partial class VerifierCodeSmsSenderTests
         var smsServiceDic = new Dictionary<string, SmsServiceOption>();
         smsServiceDic.Add("AWS", new SmsServiceOption
         {
-            SupportingCountries = new Dictionary<string, int>
+            SupportingCountriesRadio = new Dictionary<string, int>
             {
                 { "CN", 1 }
             },
         });
         smsServiceDic.Add("Telesign", new SmsServiceOption
         {
-            SupportingCountries = new Dictionary<string, int>
+            SupportingCountriesRadio = new Dictionary<string, int>
             {
                 { "CN", 2 }
             },
         });
         smsServiceDic.Add("Twilio", new SmsServiceOption
         {
-            SupportingCountries = new Dictionary<string, int>
+            SupportingCountriesRadio = new Dictionary<string, int>
             {
                 { "CN", 3 }
             },
         });
         smsServiceDic.Add("MockSmsServiceSender", new SmsServiceOption
         {
-            SupportingCountries = new Dictionary<string, int>
+            SupportingCountriesRadio = new Dictionary<string, int>
             {
                 { "CN", 4 }
             },

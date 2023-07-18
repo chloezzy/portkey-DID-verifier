@@ -61,7 +61,7 @@ public class CAVerifierServerApplicationTestModule : AbpModule
 
         var smsServiceOption = new SmsServiceOption
         {
-            SupportingCountries = new Dictionary<string, int>
+            SupportingCountriesRadio = new Dictionary<string, int>
             {
                 { "CN", 1 }
             },
@@ -69,7 +69,7 @@ public class CAVerifierServerApplicationTestModule : AbpModule
 
         var smsServiceOption1 = new SmsServiceOption
         {
-            SupportingCountries = new Dictionary<string, int>
+            SupportingCountriesRadio = new Dictionary<string, int>
             {
                 { "CN", 1 }
             },
