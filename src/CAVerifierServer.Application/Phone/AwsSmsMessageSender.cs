@@ -55,7 +55,8 @@ public class AwsSmsMessageSender : ISMSServiceSender
             {
                 _logger.LogError(
                     "AWS SMS Service sending SMSMessage failed to {phoneNum}, ResponseCode is {statusCode}",
-                    _regex.Replace(smsMessage.PhoneNumber, CAVerifierServerApplicationConsts.PhoneNumReplacement), response.HttpStatusCode);
+                    _regex.Replace(smsMessage.PhoneNumber, CAVerifierServerApplicationConsts.PhoneNumReplacement),
+                    response.HttpStatusCode);
                 throw new SmsSenderFailedException("AWS SMS Service sending SMSMessage failed");
             }
         }

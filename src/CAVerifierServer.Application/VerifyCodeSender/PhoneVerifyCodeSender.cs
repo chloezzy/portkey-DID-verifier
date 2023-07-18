@@ -36,7 +36,7 @@ public class PhoneVerifyCodeSender : IVerifyCodeSender
             _logger.LogError("PhoneNum or message text is invalidate");
             return;
         }
-        
+
         var countryName = "";
         foreach (var category in _mobileCountryRegularCategoryOptions.MobileInfos)
         {
@@ -51,7 +51,9 @@ public class PhoneVerifyCodeSender : IVerifyCodeSender
         }
 
         var smsServiceInfos = _smsServiceOptions.SmsServiceInfos;
-        var supportCountriesDic = smsServiceInfos.Keys.Where(key => smsServiceInfos[key].SupportingCountries.ContainsKey(countryName)).ToDictionary(key => key, key => smsServiceInfos[key].SupportingCountries[countryName]);
+        var supportCountriesDic = smsServiceInfos.Keys
+            .Where(key => smsServiceInfos[key].SupportingCountries.ContainsKey(countryName)).ToDictionary(key => key,
+                key => smsServiceInfos[key].SupportingCountries[countryName]);
         var smsServiceDic = supportCountriesDic.OrderByDescending(k => k.Value).ToDictionary(o => o.Key, o => o.Value);
         if (smsServiceDic.Count == 0)
         {
@@ -96,6 +98,4 @@ public class PhoneVerifyCodeSender : IVerifyCodeSender
     {
         return !string.IsNullOrWhiteSpace(guardianIdentifier);
     }
-    
-    
 }
